@@ -3,7 +3,6 @@
 ;;; Commentary:
 
 ;;; Code:
-
 ;; Load straight.el.
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -37,8 +36,8 @@
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
   :config
-  (setq evil-insert-state-cursor '(box "#ff9999")
-        evil-normal-state-cursor '(box "#848484")
+  (setq evil-insert-state-cursor '(box "#1fa6de")
+        evil-normal-state-cursor '(box "#eeeeee")
         evil-visual-state-cursor '(box "#66ff66"))
   (evil-mode 1)
   :bind
@@ -75,9 +74,6 @@
   (evil-define-key 'normal global-map "C-;" 'evil-execute-in-god-state)
   (evil-define-key 'god global-map [escape] 'evil-god-state-bail))
 
-(use-package helm-ls-git
-  :straight t)
-
 (use-package helm
   :straight t
   :config
@@ -87,6 +83,9 @@
   (global-set-key (kbd "C-<tab>") 'helm-dabbrev)
   (setq completion-styles '(flex))
   (helm-mode 1))
+
+(use-package helm-ls-git
+  :straight t)
 
 (use-package helm-descbinds
   :straight t
@@ -105,6 +104,14 @@
   (setq company-idle-delay 0)
   (setq company-minimum-prefix-length 2))
 
+(use-package helm-company
+  :straight t
+  :config
+  (eval-after-load 'company
+    '(progn
+       (define-key company-mode-map (kbd "C-:") 'helm-company)
+       (define-key company-active-map (kbd "C-:") 'helm-company))))
+
 (use-package flycheck
   :straight t
   :init
@@ -120,6 +127,16 @@
   :straight t
   :hook (after-init . helm-projectile-on))
 
+(use-package tree-sitter
+  :straight t
+  :config
+  (global-tree-sitter-mode))
+
+(use-package tree-sitter-langs
+  :straight t
+  :config
+  (add-hook 'prog-mode-hook #'tree-sitter-hl-mode))
+
 (use-package lsp-mode
   :straight t
   :init
@@ -129,7 +146,7 @@
   (setq lsp-log-io nil)
   (setq format-with-lsp nil)
    :hook (
-         (csharp-mode . lsp)
+         (gdscript-mode . lsp)
          (c++-mode . lsp)
          (rust-mode . lsp)
          (go-mode . lsp)
@@ -140,6 +157,15 @@
   :straight t
   :commands lsp-ui-mode)
 
+(use-package dap-mode
+  :straight t
+  :init
+  (dap-mode 1)
+  (dap-ui-mode 1)
+  (dap-tooltip-mode 1)
+  (tooltip-mode 1)
+  (dap-ui-controls-mode 1))
+
 (use-package go-mode
   :straight t
   :config
@@ -147,6 +173,12 @@
 
 (use-package web-mode
   :straight t)
+
+(use-package gdscript-mode
+  :straight (gdscript-mode
+             :type git
+             :host github
+             :repo "godotengine/emacs-gdscript-mode"))
 
 (use-package hl-todo
   :straight t
@@ -176,12 +208,20 @@
   :straight t
   :config
   (setq doom-themes-enable-bold t
-        doom-themes-enable-italic nil)
-  (load-theme 'doom-tomorrow-day t))
+        doom-themes-enable-italic nil))
+;;  (load-theme 'doom-flatwhite t))
+
+(use-package color-theme-sanityinc-tomorrow
+  :straight t
+  :config
+  (load-theme 'sanityinc-tomorrow-eighties t))
 
 (use-package doom-modeline
   :straight t
   :hook (after-init . doom-modeline-mode))
+
+(use-package restart-emacs
+  :straight t)
 
 (provide 'plugins)
 ;;; plugins.el ends here
